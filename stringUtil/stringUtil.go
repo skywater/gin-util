@@ -71,3 +71,11 @@ func JoinStr(strs ...interface{}) string {
 
 	return strings.Join(arrStr, "")
 }
+
+func DealError(e error) string {
+	if nil != e {
+		log.Println(e)
+		return e.Error()
+	}
+	return ""
+}

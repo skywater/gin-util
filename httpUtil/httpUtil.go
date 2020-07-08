@@ -56,13 +56,13 @@ func DoRequest(requestType string, remoteURL string, reqJSON string, header map[
 		request = strings.NewReader(reqJSON)
 	}
 	uri, e := url.Parse(remoteURL)
-	errMsg := dealError(e)
+	errMsg := stringUtil.DealError(e)
 	if stringUtil.IsNotBlank(errMsg) {
 		return BaseResp{code: 500, msg: "请求参数异常：" + errMsg}
 	}
 
 	req, e := http.NewRequest(requestType, uri.String(), request)
-	errMsg = dealError(e)
+	errMsg = stringUtil.DealError(e)
 	if stringUtil.IsNotBlank(errMsg) {
 		return BaseResp{code: 500, msg: "请求参数异常：" + errMsg}
 	}
@@ -77,7 +77,7 @@ func DoRequest(requestType string, remoteURL string, reqJSON string, header map[
 	// 	req.Header.Set()
 	// }
 	resp, e := client.Do(req)
-	errMsg = dealError(e)
+	errMsg = stringUtil.DealError(e)
 	defer resp.Body.Close()
 	if stringUtil.IsNotBlank(errMsg) {
 		return BaseResp{code: 500, msg: "请求参数异常：" + errMsg}
