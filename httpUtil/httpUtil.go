@@ -14,9 +14,9 @@ import (
 
 // BaseResp 通用返回
 type BaseResp struct {
-	code int
-	msg  string
-	data string
+	Code int
+	Msg  string
+	Data string
 }
 
 // DoGet http请求
@@ -58,13 +58,13 @@ func DoRequest(requestType string, remoteURL string, reqJSON string, header map[
 	uri, e := url.Parse(remoteURL)
 	errMsg := stringUtil.DealError(e)
 	if stringUtil.IsNotBlank(errMsg) {
-		return BaseResp{code: 500, msg: "请求参数异常：" + errMsg}
+		return BaseResp{Code: 500, Msg: "请求参数异常：" + errMsg}
 	}
 
 	req, e := http.NewRequest(requestType, uri.String(), request)
 	errMsg = stringUtil.DealError(e)
 	if stringUtil.IsNotBlank(errMsg) {
-		return BaseResp{code: 500, msg: "请求参数异常：" + errMsg}
+		return BaseResp{Code: 500, Msg: "请求参数异常：" + errMsg}
 	}
 	if isPost {
 		req.Header.Set("Content-Type", "application/json")
@@ -80,7 +80,7 @@ func DoRequest(requestType string, remoteURL string, reqJSON string, header map[
 	errMsg = stringUtil.DealError(e)
 	defer resp.Body.Close()
 	if stringUtil.IsNotBlank(errMsg) {
-		return BaseResp{code: 500, msg: "请求参数异常：" + errMsg}
+		return BaseResp{Code: 500, Msg: "请求参数异常：" + errMsg}
 	}
 	// body, _ := ioutil.ReadAll(resp.Body)
 	var body []byte
@@ -107,6 +107,6 @@ func DoRequest(requestType string, remoteURL string, reqJSON string, header map[
 	}
 	respData := string(body)
 	log.Printf("http %s请求结束，url=%s，返回状态=%s，返回参数=%s", requestType, remoteURL, resp.Status, respData)
-	baseResp := BaseResp{code: resp.StatusCode, msg: resp.Status, data: respData}
+	baseResp := BaseResp{Code: resp.StatusCode, Msg: resp.Status, Data: respData}
 	return baseResp
 }
