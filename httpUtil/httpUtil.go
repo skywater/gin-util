@@ -9,7 +9,7 @@ import (
 	"net/url"
 	"strings"
 
-	util "github.com/skywater/gin-util/stringUtil"
+	"github.com/skywater/gin-util/stringUtil"
 )
 
 // BaseResp 通用返回
@@ -57,13 +57,13 @@ func DoRequest(requestType string, remoteURL string, reqJSON string, header map[
 	}
 	uri, e := url.Parse(remoteURL)
 	errMsg := dealError(e)
-	if util.IsNotBlank(errMsg) {
+	if stringUtil.IsNotBlank(errMsg) {
 		return BaseResp{code: 500, msg: "请求参数异常：" + errMsg}
 	}
 
 	req, e := http.NewRequest(requestType, uri.String(), request)
 	errMsg = dealError(e)
-	if util.IsNotBlank(errMsg) {
+	if stringUtil.IsNotBlank(errMsg) {
 		return BaseResp{code: 500, msg: "请求参数异常：" + errMsg}
 	}
 	if isPost {
@@ -79,7 +79,7 @@ func DoRequest(requestType string, remoteURL string, reqJSON string, header map[
 	resp, e := client.Do(req)
 	errMsg = dealError(e)
 	defer resp.Body.Close()
-	if util.IsNotBlank(errMsg) {
+	if stringUtil.IsNotBlank(errMsg) {
 		return BaseResp{code: 500, msg: "请求参数异常：" + errMsg}
 	}
 	// body, _ := ioutil.ReadAll(resp.Body)
