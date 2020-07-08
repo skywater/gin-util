@@ -12,11 +12,22 @@ import (
 	"github.com/skywater/gin-util/stringUtil"
 )
 
+// BaseReq 通用请求
+type BaseReq struct {
+	SysID string `json:"sysId"` // json参数：sysId
+	AppID string `json:"appId"` // json参数：appId
+	SeqNo string `json:"seqNo"` // json参数：seqNo
+	Data  string `json:"data"`  // json参数：data
+	Sign  string `json:"sign"`  // json参数：sign
+}
+
 // BaseResp 通用返回
 type BaseResp struct {
-	Code int
-	Msg  string
-	Data string
+	AppID string `json:"appId"`   // json参数：appId
+	SeqNo string `json:"seqNo"`   // json参数：seqNo
+	Data  string `json:"data"`    // json参数：data
+	Code  int    `json:"code"`    // json参数：code
+	Msg   string `json:"message"` // json参数：消息
 }
 
 // DoGet http请求
