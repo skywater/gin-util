@@ -58,6 +58,16 @@ func ToJSONStr(v interface{}, isPretty bool) string {
 // resp := *(respArrayJ.(*[]map[string]interface{}))
 // fmt.Println("返回结果", resp, resp[0]["code"])
 func ParseJSON(jsonStr string, param interface{}) interface{} {
+	if IsBlank(jsonStr) {
+		return nil
+	}
+	if nil == param {
+		if jsonStr[0:1] == "[" {
+			param = new([]map[string]interface{})
+		} else {
+			param = new(map[string]interface{})
+		}
+	}
 	json.Unmarshal([]byte(jsonStr), param)
 	return param
 }
