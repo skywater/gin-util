@@ -11,7 +11,7 @@ import (
 
 // IsBlank 字符串是否为空
 func IsBlank(str string) bool {
-	return strings.TrimSpace(str) == ""
+	return len(strings.TrimSpace(str)) == 0
 }
 
 // IsNotBlank 字符串是否不为空
@@ -70,6 +70,13 @@ func JoinStr(strs ...interface{}) string {
 	}
 
 	return strings.Join(arrStr, "")
+}
+
+// GetType 获取类型
+func GetType(e interface{}) string {
+	ty := reflect.TypeOf(e)
+	fmt.Println(e, ty, ty.Kind(), ty.Name())
+	return ty.Name()
 }
 
 func DealError(e error) string {
