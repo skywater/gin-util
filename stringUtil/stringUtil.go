@@ -44,6 +44,24 @@ func ToJSONStr(v interface{}, isPretty bool) string {
 	return string(jsonMsg)
 }
 
+// ParseJSON 转换为对象，param为结构地址，如：&Person；返回结果为指针
+// 1、结构参数：
+// baseRespJs := ParseJSON(jsonStr, new(httpUtil.BaseResp))
+// resp := baseRespJs.(*httpUtil.BaseResp)
+// fmt.Println("返回结果", resp, resp.Code)
+// 2、map参数：
+// respMapJ := ParseJSON(jsonStr, new(map[string]interface{}))
+// resp := *(respMapJ.(*map[string]interface{}))
+// fmt.Println("返回结果", resp, resp["code"])
+// 3、数组参数：
+// respArrayJ := ParseJSON(jsonStr, new([]map[string]interface{}))
+// resp := *(respArrayJ.(*[]map[string]interface{}))
+// fmt.Println("返回结果", resp, resp[0]["code"])
+func ParseJSON(jsonStr string, param interface{}) interface{} {
+	json.Unmarshal([]byte(jsonStr), param)
+	return param
+}
+
 // JoinStr 字符串拼接
 func JoinStr(strs ...interface{}) string {
 	if nil == strs || len(strs) == 0 {
@@ -75,7 +93,7 @@ func JoinStr(strs ...interface{}) string {
 // GetType 获取类型
 func GetType(e interface{}) string {
 	ty := reflect.TypeOf(e)
-	fmt.Println(e, ty, ty.Kind(), ty.Name())
+	fmt.Println(e, "类型信息：", ty, ty.Kind(), ty.Name())
 	return ty.Name()
 }
 

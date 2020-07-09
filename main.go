@@ -1,38 +1,27 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
-	"time"
+	"reflect"
+
+	"github.com/skywater/gin-util/httpUtil"
 )
 
-// ParseJSON 转换
-func ParseJSON(jsonStr string, param interface{}) interface{} {
-	json.Unmarshal([]byte(jsonStr), &param)
-	fmt.Println("转换结果：", param)
-	return param
-}
-
 func main() {
-	// jsonStr := `{"age": 123, "name": "jack"}`
-	// var respMap1 map[string]interface{}
-	// respMap1 = ParseJSON(jsonStr, respMap1)
-	// fmt.Println("返回结果", respMap1)
-	// jsonStr = `[{"age": 123, "name": "jack"}]`
-	// var respMap2 []map[string]interface{}
-	// respMap2 = ParseJSON(jsonStr, respMap2)
-	// fmt.Println("返回结果", respMap2)
+	// goFunc1(f1)
+	// goFunc2(f2, 100)
 
-	goFunc1(f1)
-	goFunc2(f2, 100)
+	// goFunc(f1)
+	// goFunc(f2, "xxxx")
+	// goFunc(f3, "hello", "world", 1, 3.14)
+	// time.Sleep(5 * time.Second)
 
-	goFunc(f1)
-	goFunc(f2, "xxxx")
-	goFunc(f3, "hello", "world", 1, 3.14)
-	time.Sleep(5 * time.Second)
+
 }
 
 func goFunc1(f func()) {
+	ty := reflect.TypeOf(f)
+	fmt.Println(f, ty, ty.Kind(), ty.Name())
 	go f()
 }
 
