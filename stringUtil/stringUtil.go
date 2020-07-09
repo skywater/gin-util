@@ -44,7 +44,7 @@ func ToJSONStr(v interface{}, isPretty bool) string {
 	return string(jsonMsg)
 }
 
-// ParseJSON 转换为对象，param为结构地址，如：&Person；返回结果为指针
+// ParseJSON 转换为对象，param为结构地址，如：&Person；返回结果为地址，须用指针
 // 1、结构参数：
 // baseRespJs := ParseJSON(jsonStr, new(httpUtil.BaseResp))
 // resp := baseRespJs.(*httpUtil.BaseResp)
