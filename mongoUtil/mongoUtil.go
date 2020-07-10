@@ -11,8 +11,8 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-// 完整url=mongodb://root:123456@localhost:27017/
-type mgo struct {
+// MgoConfigConfig 参数设置，完整url=mongodb://root:123456@localhost:27017/
+type MgoConfigConfig struct {
 	url        string // 完整url = mongodb://root:123456@localhost:27017/
 	URI        string // 数据库网络地址，localhost:27017/
 	User       string // 账号
@@ -22,7 +22,8 @@ type mgo struct {
 	MgoColl    *mongo.Collection
 }
 
-func (m *mgo) Init() *mongo.Client {
+// Init 初始化链接
+func (m *MgoConfig) Init() *mongo.Client {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel() //养成良好的习惯，在调用WithTimeout之后defer cancel()
 	if stringUtil.IsBlank(m.url) {
@@ -45,7 +46,8 @@ func (m *mgo) Init() *mongo.Client {
 	return client
 }
 
-func (m *mgo) InitCollection() *mongo.Collection {
+// InitCollection 初始化集合
+func (m *MgoConfig) InitCollection() *mongo.Collection {
 	if nil != m.MgoColl {
 		database := m.Init().Database(m.database)
 		collection := database.Collection(m.collection)
@@ -54,7 +56,8 @@ func (m *mgo) InitCollection() *mongo.Collection {
 	return m.MgoColl
 }
 
-func (m *mgo) MgoCollection(databaseName string, collectionName string) *mongo.Collection {
+// MgoCollection 初始化集合
+func (m *MgoConfig) MgoCollection(databaseName string, collectionName string) *mongo.Collection {
 	if stringUtil.IsBlank(databaseName) {
 		databaseName = m.database
 	}
@@ -67,7 +70,8 @@ func (m *mgo) MgoCollection(databaseName string, collectionName string) *mongo.C
 	return collection
 }
 
-func (m *mgo) Find(databaseName string, collectionName string) (*mongo.Collection, []map[string]interface{}) {
+// Find 查找集合中数据
+func (m *MgoConfig) Find(databaseName string, collectionName string) (*mongo.Collection, []map[string]interface{}) {
 	collection := m.MgoCollection(databaseName, collectionName)
 	filter := bson.D{}
 	// SORT := bson.D{{"_id", 1}} //filter := bson.D{{key,value}}
@@ -88,7 +92,8 @@ func (m *mgo) Find(databaseName string, collectionName string) (*mongo.Collectio
 	return collection, episodes
 }
 
-func (m *mgo) InsertOne(v interface{}) (*mongo.Collection, interface{}) {
+// InsertOne 向集合中插入数据
+func (m *MgoConfig) InsertOne(v interface{}) (*mongo.Collection, interface{}) {
 	Result, error := m.InitCollection().InsertOne(context.TODO(), v)
 	if nil != error {
 		log.Println(error)
@@ -96,7 +101,8 @@ func (m *mgo) InsertOne(v interface{}) (*mongo.Collection, interface{}) {
 	return m.MgoColl, Result.InsertedID
 }
 
-func (m *mgo) InsertMany(v ...interface{}) *mongo.Collection {
+// InsertMany 向集合中插入数据
+func (m *MgoConfig) InsertMany(v ...interface{}) *mongo.Collection {
 	_, error := m.InitCollection().InsertMany(context.TODO(), v)
 	if nil != error {
 		log.Println(error)
@@ -104,8 +110,8 @@ func (m *mgo) InsertMany(v ...interface{}) *mongo.Collection {
 	return m.MgoColl
 }
 
-// Delete 方法，v为nil，也删除全部！！！
-func (m *mgo) Delete(key string, v interface{}) *mongo.Collection {
+// Delete 方法，v为nil时删除全部！！！
+func (m *MgoConfig) Delete(key string, v interface{}) *mongo.Collection {
 	filter := bson.D{}
 	if nil != v {
 		filter = bson.D{{key, v}}
@@ -118,7 +124,8 @@ func (m *mgo) Delete(key string, v interface{}) *mongo.Collection {
 	return m.MgoColl
 }
 
-func (m *mgo) Drop() {
+// Drop 删除表
+func (m *MgoConfig) Drop() {
 	error := m.InitCollection().Drop(context.TODO())
 	if nil != error {
 		log.Println(error)
