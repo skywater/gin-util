@@ -25,10 +25,8 @@ func main() {
 	regexStr := `(.+?)[:：](\{\".+?\":\{.+?\}\}\})|(.+?)[:：](\{\".+?\":.+?\})`
 	// regexStr = `\w+_\w+`
 	reg := regexp.MustCompile(regexStr)
-	// lst := reg.FindAllStringSubmatch(remark, -1)
-	// fmt.Println(lst)
 
-	lst := reg.FindStringSubmatch(remark)
+	lst := reg.FindAllStringSubmatch(remark, -1)
 	groupNames := reg.SubexpNames()
 	fmt.Printf("%v, %d, %d\n", groupNames, len(lst), len(groupNames))
 	// fmt.Println(lst)
