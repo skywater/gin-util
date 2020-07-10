@@ -21,16 +21,16 @@ func IsNotBlank(str string) bool {
 
 // ToJSON 转为json
 func ToJSON(v interface{}) string {
-	return ToJSONStr(v, false)
+	return toJSONStr(v, false)
 }
 
 // ToPrettyJSON 格式化json
 func ToPrettyJSON(v interface{}) string {
-	return ToJSONStr(v, true)
+	return toJSONStr(v, true)
 }
 
-// ToJSONStr 转换为json
-func ToJSONStr(v interface{}, isPretty bool) string {
+// toJSONStr 转换为json
+func toJSONStr(v interface{}, isPretty bool) string {
 	var jsonMsg []byte
 	var e error
 	if isPretty {
