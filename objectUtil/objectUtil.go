@@ -6,7 +6,8 @@ import (
 	"github.com/skywater/gin-util/stringUtil"
 )
 
-// LinkedMap 顺序Map
+// LinkedMap 顺序Map；
+// 用法，lm := new(LinkedMap); lmObj := lm.NewDefMap()
 type LinkedMap struct {
 	keys []string               `map的keys`
 	mapV map[string]interface{} `map存储`
