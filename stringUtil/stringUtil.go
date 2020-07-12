@@ -83,21 +83,31 @@ func JoinStr(strs ...interface{}) string {
 		ty := reflect.TypeOf(e)
 		fmt.Println(e, ty, ty.Kind(), ty.Name())
 		// ty.(type)只能在switch使用
-		switch e.(type) {
-		case string:
-			arrStr[i] = e.(string)
-		case int:
-			arrStr[i] = strconv.Itoa(e.(int))
-		case float32, float64:
-			arrStr[i] = strconv.FormatFloat(e.(float64), 'f', 4, 32)
-		// case float64:
-		// 	arrStr[i] = strconv.FormatFloat(e.(float64), 'f', 4, 64)
-		default:
-			arrStr[i] = strconv.Itoa(e.(int))
-		}
+		arrStr[i] = ToStr(e)
 	}
 
 	return strings.Join(arrStr, "")
+}
+
+// ToStr 转为字符串
+func ToStr(e interface{}) string {
+	switch e.(type) {
+	case string:
+		return e.(string)
+	case int:
+		return strconv.Itoa(e.(int))
+	case float32, float64:
+		return strconv.FormatFloat(e.(float64), 'f', 4, 32)
+	default:
+		return ToJSON(e)
+	}
+}
+
+// ToInt 字符串转为整型
+func ToInt(str string) int {
+	// 空字符串字段、空格都会转为 0
+	i, _ := strconv.Atoi(str)
+	return i
 }
 
 // GetType 获取类型

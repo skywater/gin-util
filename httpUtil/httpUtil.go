@@ -9,7 +9,7 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/skywater/gin-util/stringUtil"
+	"gin-util/stringUtil"
 )
 
 // BaseReq 通用请求

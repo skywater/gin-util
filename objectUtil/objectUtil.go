@@ -3,30 +3,28 @@ package objectUtil
 import (
 	"strings"
 
-	"github.com/skywater/gin-util/stringUtil"
+	"gin-util/stringUtil"
 )
 
 // LinkedMap 顺序Map；
 // 用法，lm := new(LinkedMap); lmObj := lm.NewDefMap()
 type LinkedMap struct {
-	keys []string               `map的keys`
-	mapV map[string]interface{} `map存储`
+	keys []string               `json:keys`
+	mapV map[string]interface{} `json:mapV`
 }
 
 // NewLinkedMap 初始化空map
 func NewLinkedMap() LinkedMap {
 	return LinkedMap{
 		keys: make([]string, 0),
-		mapV: make(map[string]interface{}),
-	}
+		mapV: make(map[string]interface{})}
 }
 
 // InitLinkedMap 初始化
 func InitLinkedMap(key string, val interface{}) LinkedMap {
 	return LinkedMap{
 		keys: []string{key},
-		mapV: map[string]interface{}{key: val},
-	}
+		mapV: map[string]interface{}{key: val}}
 }
 
 // Put 放置数据
@@ -46,6 +44,12 @@ func (m *LinkedMap) Get(key string) interface{} {
 // Del 删除数据
 func (m *LinkedMap) Del(key string) *LinkedMap {
 	delete(m.mapV, key)
+	for i, v := range m.keys {
+		if v == key {
+			m.keys = append(m.keys[:i], m.keys[i+1:]...)
+			break
+		}
+	}
 	return m
 }
 
@@ -64,7 +68,7 @@ func (m *LinkedMap) Values() []interface{} {
 }
 
 // ToString 转为string
-func (m *LinkedMap) ToString() string {
+func (m LinkedMap) String() string {
 	if len(m.keys) == 0 {
 		return ""
 	}
@@ -72,10 +76,17 @@ func (m *LinkedMap) ToString() string {
 	length := len(m.keys)
 	b.Grow(length * 10)
 	b.WriteString("{")
+	var val interface{}
 	for i, k := range m.keys {
 		b.WriteString(k)
-		b.WriteString("=")
-		b.WriteString(stringUtil.ToJSON(m.mapV[k]))
+		b.WriteString(":")
+		val = m.mapV[k]
+		switch val.(type) {
+		case LinkedMap:
+			b.WriteString(val.(LinkedMap).String())
+		default:
+			b.WriteString(stringUtil.ToStr(m.mapV[k]))
+		}
 		if i != length-1 {
 			b.WriteString(",")
 		}

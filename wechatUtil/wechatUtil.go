@@ -1,8 +1,8 @@
 package wechatUtil
 
 import (
-	"github.com/skywater/gin-util/httpUtil"
-	"github.com/skywater/gin-util/stringUtil"
+	"gin-util/httpUtil"
+	"gin-util/stringUtil"
 )
 
 // SendQywxReboot 发送至企业微信机器人
