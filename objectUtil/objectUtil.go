@@ -13,7 +13,7 @@ type LinkedMap struct {
 	mapV map[string]interface{} `map存储`
 }
 
-// NewDefMap 初始化空map
+// NewLinkedMap 初始化空map
 func NewLinkedMap() LinkedMap {
 	return LinkedMap{
 		keys: make([]string, 0),
