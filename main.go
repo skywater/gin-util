@@ -17,15 +17,10 @@ func main() {
 	// goFunc(f3, "hello", "world", 1, 3.14)
 	// time.Sleep(5 * time.Second)
 
-	lmap := objectUtil.NewLinkedMap()
-	lmap.Put("df", "dfg234")
-	lmap.Put("df1", 123)
-	lmap.Put("sssss", objectUtil.InitLinkedMap("fff", 1234123))
-	fmt.Println(lmap)
-	lmap.Del("df1").Put("df2", 222)
-	fmt.Println(lmap)
+	lmap := objectUtil.InitLinkedMap("fff", 1234123)
 	fmt.Println(stringUtil.ToStr(lmap))
 	fmt.Println(stringUtil.ToJSON(lmap))
+	fmt.Println(lmap)
 
 }
 
