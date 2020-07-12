@@ -14,15 +14,15 @@ type LinkedMap struct {
 }
 
 // NewDefMap 初始化空map
-func (m *LinkedMap) NewDefMap() LinkedMap {
+func NewLinkedMap() LinkedMap {
 	return LinkedMap{
 		keys: make([]string, 0),
 		mapV: make(map[string]interface{}),
 	}
 }
 
-// NewMap 初始化
-func (m *LinkedMap) NewMap(key string, val interface{}) LinkedMap {
+// InitLinkedMap 初始化
+func InitLinkedMap(key string, val interface{}) LinkedMap {
 	return LinkedMap{
 		keys: []string{key},
 		mapV: map[string]interface{}{key: val},
