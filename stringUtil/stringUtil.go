@@ -156,3 +156,20 @@ func DealError(e error) string {
 	}
 	return ""
 }
+
+// ParseTableName 解析sql，获取表名
+func ParseTableName(sql string) string {
+	if IsBlank(sql) {
+		return ""
+	}
+	sql = strings.ToLower(strings.TrimSpace(sql))
+	key := "from"
+	idx := strings.Index(sql, key)
+	sql = sql[idx+len(key)+1:]
+	key = "where"
+	idx = strings.Index(sql, key)
+	if idx >= 0 {
+		sql = sql[:idx-1]
+	}
+	return strings.TrimSpace(sql)
+}

@@ -145,6 +145,11 @@ func (m *MgoConfig) InsertJSON(v string) *mongo.Collection {
 	return m.insertMany(bDoc)
 }
 
+// DeleteAll 删除全部！！！
+func (m *MgoConfig) DeleteAll() *mongo.Collection {
+	return m.Delete("", nil)
+}
+
 // Delete 方法，v为nil时删除全部！！！
 func (m *MgoConfig) Delete(key string, v interface{}) *mongo.Collection {
 	filter := bson.D{}
