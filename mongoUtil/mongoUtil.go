@@ -3,8 +3,10 @@ package mongoUtil
 import (
 	"context"
 	"log"
+	"strings"
 	"time"
 
+	"gin-util/objectUtil"
 	"gin-util/stringUtil"
 
 	"go.mongodb.org/mongo-driver/bson"
@@ -12,46 +14,51 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-// MgoConfigConfig 参数设置，完整url=mongodb://root:123456@localhost:27017/
-type MgoConfigConfig struct {
-	url        string // 完整url = mongodb://root:123456@localhost:27017/
-	URI        string // 数据库网络地址，localhost:27017/
-	User       string // 账号
-	Pwd        string // 密码
-	database   string // 要连接的数据库
-	collection string // 要连接的集合
-	MgoColl    *mongo.Collection
+// MgoConfig 参数设置，完整url=mongodb://root:123456@localhost:27017/
+type MgoConfig struct {
+	URL      string // 完整url = mongodb://root:123456@localhost:27017/
+	URI      string // 数据库网络地址，localhost:27017/
+	User     string // 账号
+	Pwd      string // 密码
+	DbName   string // 要连接的数据库
+	CollName string // 要连接的集合
+	MgoColl  *mongo.Collection
+	client   *mongo.Client
 }
 
 // Init 初始化链接
 func (m *MgoConfig) Init() *mongo.Client {
+	if nil != m.client {
+		return m.client
+	}
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel() //养成良好的习惯，在调用WithTimeout之后defer cancel()
-	if stringUtil.IsBlank(m.url) {
-		m.url = "mongodb://"
+	if stringUtil.IsBlank(m.URL) {
+		m.URL = "mongodb://"
 		if stringUtil.IsBlank(m.URI) {
 			m.URI = "localhost:27017/"
 		}
 		if stringUtil.IsBlank(m.User) {
-			m.url += m.URI
+			m.URL += m.URI
 		} else {
-			m.url += m.User + ":" + m.Pwd + "@" + m.URI
+			m.URL += m.User + ":" + m.Pwd + "@" + m.URI
 		}
 	}
-	client, err := mongo.Connect(ctx, options.Client().ApplyURI(m.url))
+	client, err := mongo.Connect(ctx, options.Client().ApplyURI(m.URL))
 	if err != nil {
 		log.Println(err)
 		panic(err)
 	}
+	m.client = client
 	// defer client.Disconnect(ctx)
 	return client
 }
 
 // InitCollection 初始化集合
 func (m *MgoConfig) InitCollection() *mongo.Collection {
-	if nil != m.MgoColl {
-		database := m.Init().Database(m.database)
-		collection := database.Collection(m.collection)
+	if nil == m.MgoColl {
+		database := m.Init().Database(m.DbName)
+		collection := database.Collection(m.CollName)
 		m.MgoColl = collection
 	}
 	return m.MgoColl
@@ -60,15 +67,28 @@ func (m *MgoConfig) InitCollection() *mongo.Collection {
 // MgoCollection 初始化集合
 func (m *MgoConfig) MgoCollection(databaseName string, collectionName string) *mongo.Collection {
 	if stringUtil.IsBlank(databaseName) {
-		databaseName = m.database
+		databaseName = m.DbName
 	}
 	if stringUtil.IsBlank(collectionName) {
-		collectionName = m.collection
+		collectionName = m.CollName
 	}
 	database := m.Init().Database(databaseName)
 	collection := database.Collection(collectionName)
 	m.MgoColl = collection
 	return collection
+}
+
+// FindAll 查询所有
+func (m *MgoConfig) FindAll() (*mongo.Collection, []map[string]interface{}) {
+	collection := m.InitCollection()
+	filter := bson.D{}
+	cursor, e := collection.Find(context.TODO(), filter, nil)
+	var retMap []map[string]interface{}
+	e = cursor.All(context.TODO(), &retMap)
+	if e != nil {
+		panic(e)
+	}
+	return collection, retMap
 }
 
 // Find 查找集合中数据
@@ -93,22 +113,36 @@ func (m *MgoConfig) Find(databaseName string, collectionName string) (*mongo.Col
 	return collection, episodes
 }
 
-// InsertOne 向集合中插入数据
-func (m *MgoConfig) InsertOne(v interface{}) (*mongo.Collection, interface{}) {
-	Result, error := m.InitCollection().InsertOne(context.TODO(), v)
-	if nil != error {
-		log.Println(error)
-	}
-	return m.MgoColl, Result.InsertedID
-}
-
-// InsertMany 向集合中插入数据
-func (m *MgoConfig) InsertMany(v ...interface{}) *mongo.Collection {
+// InsertMany 向集合中插入 map 数据，但不能直接接收 []map
+func (m *MgoConfig) insertMany(v ...interface{}) *mongo.Collection {
+	log.Println("InsertMany插入数据为：", v)
 	_, error := m.InitCollection().InsertMany(context.TODO(), v)
 	if nil != error {
-		log.Println(error)
+		log.Println("insertMany插入数据异常：", error)
 	}
 	return m.MgoColl
+}
+
+// Insert 向集合中插入 map 数据，包括[]map
+func (m *MgoConfig) Insert(v ...interface{}) *mongo.Collection {
+	nv := objectUtil.DealArrayObj(v...)
+	return m.insertMany(nv...)
+}
+
+// InsertJSON 向集合中插入 json 数据
+func (m *MgoConfig) InsertJSON(v string) *mongo.Collection {
+	log.Println("InsertJSON插入数据为：", v)
+	if stringUtil.IsBlank(v) {
+		log.Println("InsertJSON插入数据为空！")
+		return m.MgoColl
+	}
+	v = strings.TrimSpace(v)
+	if v[0:1] != "[" {
+		v = "[" + v + "]"
+	}
+	var bDoc []interface{}
+	bson.UnmarshalExtJSON([]byte(v), true, &bDoc)
+	return m.insertMany(bDoc)
 }
 
 // Delete 方法，v为nil时删除全部！！！
@@ -130,5 +164,13 @@ func (m *MgoConfig) Drop() {
 	error := m.InitCollection().Drop(context.TODO())
 	if nil != error {
 		log.Println(error)
+	}
+}
+
+// Disconnect 断开链接
+func (m *MgoConfig) Disconnect() {
+	if nil != m.client {
+		m.client.Disconnect(context.TODO())
+		m.client = nil
 	}
 }

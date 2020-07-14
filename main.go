@@ -3,9 +3,6 @@ package main
 import (
 	"fmt"
 	"reflect"
-
-	"gin-util/objectUtil"
-	"gin-util/stringUtil"
 )
 
 func main() {
@@ -16,12 +13,6 @@ func main() {
 	// goFunc(f2, "xxxx")
 	// goFunc(f3, "hello", "world", 1, 3.14)
 	// time.Sleep(5 * time.Second)
-
-	lmap := objectUtil.InitLinkedMap("fff", 1234123)
-	fmt.Println(stringUtil.ToStr(lmap))
-	fmt.Println(stringUtil.ToJSON(lmap))
-	fmt.Println(lmap)
-
 }
 
 func goFunc1(f func()) {

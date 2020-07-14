@@ -1,6 +1,8 @@
 package objectUtil
 
 import (
+	"fmt"
+	"reflect"
 	"strings"
 
 	"gin-util/stringUtil"
@@ -93,4 +95,47 @@ func (m LinkedMap) String() string {
 	}
 	b.WriteString("}")
 	return b.String()
+}
+
+// IsArray 判断是否是数组，并返回
+func IsArray(v interface{}) (bool, []interface{}) {
+	if nil == v {
+		return false, nil
+	}
+	// v.(type) 无法判断是否是数组
+	switch reflect.TypeOf(v).Kind() {
+	case reflect.Slice, reflect.Array:
+		var nv []interface{}
+		s := reflect.ValueOf(v)
+		for i := 0; i < s.Len(); i++ {
+			elem := s.Index(i)
+			nv = append(nv, elem.Interface())
+		}
+		return true, nv
+		// 报错：interface conversion: interface {} is []map[string]interface {}, not []interface {}
+		// return true, v.([]interface{})
+	default:
+		return false, nil
+	}
+}
+
+// ArrayIsEmpty 数组为空
+func ArrayIsEmpty(v []interface{}) bool {
+	return nil == v || len(v) == 0
+}
+
+// DealArrayObj 处理数组
+func DealArrayObj(v ...interface{}) []interface{} {
+	if ArrayIsEmpty(v) {
+		return nil
+	}
+	nv := make([]interface{}, 0, len(v))
+	for _, vv := range v {
+		if bl, va := IsArray(vv); bl {
+			nv = append(nv, va...)
+		} else {
+			nv = append(nv, vv)
+		}
+	}
+	return nv
 }
