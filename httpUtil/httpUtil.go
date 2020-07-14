@@ -119,6 +119,11 @@ func DoRequest(requestType string, remoteURL string, reqJSON string, header map[
 	respData := string(body)
 	log.Printf("http %s请求结束，url=%s，返回状态=%s，返回参数=%s", requestType, remoteURL, resp.Status, respData)
 	baseResp := BaseResp{Code: resp.StatusCode, Msg: resp.Status, Data: respData}
-	baseResp.Data = stringUtil.ParseJSON(respData, nil)
+	respMap := stringUtil.ParseJSON(respData, nil)
+	if stringUtil.IsArray(respData) {
+		baseResp.Data = *(*[]map[string]interface{})(respMap.(*[]map[string]interface{}))
+	} else {
+		baseResp.Data = *(*map[string]interface{})(respMap.(*map[string]interface{}))
+	}
 	return baseResp
 }

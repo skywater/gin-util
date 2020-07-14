@@ -61,16 +61,48 @@ func ParseJSON(jsonStr string, param interface{}) interface{} {
 	if IsBlank(jsonStr) {
 		return nil
 	}
+	jsonStr = strings.TrimSpace(jsonStr)
 	if nil == param {
-		if jsonStr[0:1] == "[" {
+		if IsArray(jsonStr) {
 			param = new([]map[string]interface{})
 		} else {
 			param = new(map[string]interface{})
 		}
 	}
 	json.Unmarshal([]byte(jsonStr), param)
+	fmt.Println(param, &param, GetType(param))
 	return param
 }
+
+// IsArray 字符串是否是数组型json
+func IsArray(param string) bool {
+	if IsBlank(param) {
+		return false
+	}
+	param = strings.TrimSpace(param)
+	if param[0:1] == "[" {
+		return true
+	}
+	return false
+}
+
+// func ParseJSON(jsonStr string, param *interface{}) interface{} {
+// 	if IsBlank(jsonStr) {
+// 		return nil
+// 	}
+// 	if nil == param {
+// 		if jsonStr[0:1] == "[" {
+// 			parType := new([]map[string]interface{})
+// 			json.Unmarshal([]byte(jsonStr), parType)
+// 			return *parType
+// 		}
+// 		parType := new(map[string]interface{})
+// 		json.Unmarshal([]byte(jsonStr), parType)
+// 		return *parType
+// 	}
+// 	json.Unmarshal([]byte(jsonStr), param)
+// 	return *param
+// }
 
 // JoinStr 字符串拼接
 func JoinStr(strs ...interface{}) string {

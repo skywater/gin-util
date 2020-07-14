@@ -1,6 +1,9 @@
 package objectUtil
 
 import (
+	"bytes"
+	"encoding/gob"
+	"fmt"
 	"reflect"
 	"strings"
 
@@ -137,4 +140,17 @@ func DealArrayObj(v ...interface{}) []interface{} {
 		}
 	}
 	return nv
+}
+
+// Copy 深拷贝
+// jsonStr := `{"sysId":"111"}`
+// var jj string  // 不能定义为interface{}
+// objectUtil.Copy(&jsonStr, &jj)
+func Copy(src, dst interface{}) {
+	var buf bytes.Buffer
+	if err := gob.NewEncoder(&buf).Encode(src); err != nil {
+		return
+	}
+	gob.NewDecoder(bytes.NewBuffer(buf.Bytes())).Decode(dst)
+	fmt.Println(dst)
 }
