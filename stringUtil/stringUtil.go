@@ -55,7 +55,8 @@ func ParseJSON(jsonStr string, param interface{}) interface{} {
 	if IsBlank(jsonStr) {
 		return nil
 	}
-	jsonStr = strings.TrimSpace(jsonStr)	if nil == param {
+	jsonStr = strings.TrimSpace(jsonStr)
+	if nil == param {
 		if IsArray(jsonStr) {
 			param = new([]map[string]interface{})
 		} else {
