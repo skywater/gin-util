@@ -3,7 +3,6 @@ package objectUtil
 import (
 	"bytes"
 	"encoding/gob"
-	"fmt"
 	"reflect"
 	"strings"
 
@@ -152,5 +151,4 @@ func Copy(src, dst interface{}) {
 		return
 	}
 	gob.NewDecoder(bytes.NewBuffer(buf.Bytes())).Decode(dst)
-	fmt.Println(dst)
 }

@@ -47,13 +47,14 @@ func DoPostHead(url string, reqJSON string, header map[string]string) BaseResp {
 
 // DoRequest http请求，reqJSON暂未考虑form-data，header暂未处理
 func DoRequest(requestType string, remoteURL string, reqJSON string, header map[string]string) BaseResp {
+	log.SetFlags(log.Lshortfile | log.LstdFlags)
 	if stringUtil.IsBlank(requestType) {
 		requestType = "GET"
 	} else {
 		requestType = strings.ToUpper(requestType)
 	}
 	isPost := strings.EqualFold("POST", requestType)
-	log.Printf("http %s请求开始，url=%s，请求参数=%s", requestType, remoteURL, reqJSON)
+	log.Printf("http %s请求开始，url=%s，请求参数=%s\n", requestType, remoteURL, reqJSON)
 	client := &http.Client{}
 	if isPost { // 跳过证书验证
 		// tr := &http.Transport{
@@ -117,7 +118,7 @@ func DoRequest(requestType string, remoteURL string, reqJSON string, header map[
 		}
 	}
 	respData := string(body)
-	log.Printf("http %s请求结束，url=%s，返回状态=%s，返回参数=%s", requestType, remoteURL, resp.Status, respData)
+	log.Printf("http %s请求结束，url=%s，返回状态=%s，返回参数=%s\n", requestType, remoteURL, resp.Status, respData)
 	baseResp := BaseResp{Code: resp.StatusCode, Msg: resp.Status, Data: respData}
 	baseResp.Data = stringUtil.ParseJSON(respData, nil)
 	return baseResp

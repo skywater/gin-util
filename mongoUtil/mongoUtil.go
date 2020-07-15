@@ -28,6 +28,7 @@ type MgoConfig struct {
 
 // Init 初始化链接
 func (m *MgoConfig) Init() *mongo.Client {
+	log.SetFlags(log.Lshortfile | log.LstdFlags)
 	if nil != m.client {
 		return m.client
 	}
