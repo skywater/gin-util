@@ -44,25 +44,18 @@ func toJSONStr(v interface{}, isPretty bool) string {
 	return string(jsonMsg)
 }
 
-// ParseJSON 转换为对象，param为结构地址，如：&Person；返回结果为地址，须用指针
+// ParseJSON 反序列化为对象，param为结构地址，如：&Person；返回结果为为值，直接强转类型即可
 // 1、结构参数：
 // baseRespJs := ParseJSON(jsonStr, new(httpUtil.BaseResp))
-// resp := baseRespJs.(*httpUtil.BaseResp)
-// fmt.Println("返回结果", resp, resp.Code)
 // 2、map参数：
 // respMapJ := ParseJSON(jsonStr, new(map[string]interface{}))
-// resp := *(respMapJ.(*map[string]interface{}))
-// fmt.Println("返回结果", resp, resp["code"])
 // 3、数组参数：
 // respArrayJ := ParseJSON(jsonStr, new([]map[string]interface{}))
-// resp := *(respArrayJ.(*[]map[string]interface{}))
-// fmt.Println("返回结果", resp, resp[0]["code"])
 func ParseJSON(jsonStr string, param interface{}) interface{} {
 	if IsBlank(jsonStr) {
 		return nil
 	}
-	jsonStr = strings.TrimSpace(jsonStr)
-	if nil == param {
+	jsonStr = strings.TrimSpace(jsonStr)	if nil == param {
 		if IsArray(jsonStr) {
 			param = new([]map[string]interface{})
 		} else {
@@ -70,8 +63,7 @@ func ParseJSON(jsonStr string, param interface{}) interface{} {
 		}
 	}
 	json.Unmarshal([]byte(jsonStr), param)
-	fmt.Println(param, &param, GetType(param))
-	return param
+	return reflect.Indirect(reflect.ValueOf(param)).Interface()
 }
 
 // IsArray 字符串是否是数组型json
@@ -85,24 +77,6 @@ func IsArray(param string) bool {
 	}
 	return false
 }
-
-// func ParseJSON(jsonStr string, param *interface{}) interface{} {
-// 	if IsBlank(jsonStr) {
-// 		return nil
-// 	}
-// 	if nil == param {
-// 		if jsonStr[0:1] == "[" {
-// 			parType := new([]map[string]interface{})
-// 			json.Unmarshal([]byte(jsonStr), parType)
-// 			return *parType
-// 		}
-// 		parType := new(map[string]interface{})
-// 		json.Unmarshal([]byte(jsonStr), parType)
-// 		return *parType
-// 	}
-// 	json.Unmarshal([]byte(jsonStr), param)
-// 	return *param
-// }
 
 // JoinStr 字符串拼接
 func JoinStr(strs ...interface{}) string {
@@ -145,7 +119,8 @@ func ToInt(str string) int {
 // GetType 获取类型
 func GetType(e interface{}) string {
 	ty := reflect.TypeOf(e)
-	fmt.Println(e, "类型信息：", ty, ty.Kind(), ty.Name())
+	// ty.Name()输出空！！！ty.String()、ty.Kind().String()可以直接输出类型
+	fmt.Println(e, "类型信息：ty=", ty, ",Kind()=", ty.Kind())
 	return ty.Name()
 }
 
