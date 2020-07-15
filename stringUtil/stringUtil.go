@@ -1,6 +1,7 @@
 package stringUtil
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"log"
@@ -63,7 +64,11 @@ func ParseJSON(jsonStr string, param interface{}) interface{} {
 			param = new(map[string]interface{})
 		}
 	}
-	json.Unmarshal([]byte(jsonStr), param)
+	deJs := json.NewDecoder(bytes.NewReader([]byte(jsonStr)))
+	deJs.UseNumber()
+	deJs.Decode(param)
+	// 解决id过长，精度丢失，变成科学计数法
+	// json.Unmarshal([]byte(jsonStr), param)
 	return reflect.Indirect(reflect.ValueOf(param)).Interface()
 }
 
