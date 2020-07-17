@@ -147,10 +147,10 @@ func ParseTableName(sql string) string {
 	key := "from"
 	idx := strings.Index(sql, key)
 	sql = sql[idx+len(key)+1:]
-	key = "where"
+	key = " "
 	idx = strings.Index(sql, key)
 	if idx >= 0 {
-		sql = sql[:idx-1]
+		sql = sql[:idx]
 	}
 	return strings.TrimSpace(sql)
 }
