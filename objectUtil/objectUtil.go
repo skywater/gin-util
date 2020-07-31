@@ -6,7 +6,7 @@ import (
 	"reflect"
 	"strings"
 
-	"gin-util/stringUtil"
+	"github.com/skywater/gin-util/stringUtil"
 )
 
 // LinkedMap 顺序Map；

@@ -6,8 +6,8 @@ import (
 	"strings"
 	"time"
 
-	"gin-util/objectUtil"
-	"gin-util/stringUtil"
+	"github.com/skywater/gin-util/objectUtil"
+	"github.com/skywater/gin-util/stringUtil"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
