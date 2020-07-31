@@ -117,6 +117,9 @@ func (m *MgoConfig) Find(databaseName string, collectionName string) (*mongo.Col
 // InsertMany 向集合中插入 map 数据，但不能直接接收 []map
 func (m *MgoConfig) insertMany(v ...interface{}) *mongo.Collection {
 	log.Println("InsertMany插入数据为：", v)
+	if objectUtil.ArrayIsEmpty(v) {
+		return m.MgoColl
+	}
 	_, error := m.InitCollection().InsertMany(context.TODO(), v)
 	if nil != error {
 		log.Println("insertMany插入数据异常：", error)
