@@ -45,6 +45,7 @@ func (m *MgoConfig) Init() *mongo.Client {
 			m.URL += m.User + ":" + m.Pwd + "@" + m.URI
 		}
 	}
+	log.Printf("mongodb 初始化链接：", m.URL)
 	client, err := mongo.Connect(ctx, options.Client().ApplyURI(m.URL))
 	if err != nil {
 		log.Println(err)
